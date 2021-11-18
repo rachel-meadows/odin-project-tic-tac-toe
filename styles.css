@@ -1,0 +1,15 @@
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+#navigation {
+    background-color: black;
+}
+
+#logo {
+    width: 190px;
+    height: auto;
+    padding: 3px;
+}
