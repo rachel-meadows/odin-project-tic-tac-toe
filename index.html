@@ -6,55 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic-Tac-Toe</title>
     <link rel="stylesheet" href="styles.css">
-</head>
+    <link rel="icon" href="img/favicon.png" sizes="any">
+    </head>
 
 <body>
     
     <div id="navigation">
-        <a><img src="img/logoVariant.png" id="logo"></a>
+        <img src="img/logoVariant.png" id="logo">
     </div>
-
-    <!-- Content is divided into 3 columns - the 2x scores, and the board -->
-    <div id="content">
-
-        <div id="xScoreContainer">
-            <div id=xName>You</div>
-            <div id=xScore>0</div>
-        </div>
-
-        <div id="centerColumn">
-            <div id="centerContent">
-                <div id="buttons">
-                    <button id="difficulty">Difficulty: Easy ▼</button>
-                    <img src="img/reset.png" id="reset">
-                </div>
-                <div id="grid">
-                    <div class="row3">
-                        <div class="column1, square"></div>
-                        <div class="column2, square"></div>
-                        <div class="column3, square"></div>
+    
+    <div id="tokenPickerBackground">
+        <div id="tokenPickerPopup">
+            <div id="tokenPickerPopupText">Choose your token!</div>
+            <div id="tokens">
+                <a href="game.html">
+                    <div id="xToken" class="token">
+                        <img id="xTokenImage" src="img/xToken.png">
                     </div>
-                    <div class="row2">
-                        <div class="column1, square"></div>
-                        <div class="column2, square"></div>
-                        <div class="column3, square"></div>
+                </a>
+                <a href="game.html">     
+                    <div id="oToken" class="token">
+                        <img id="oTokenImage" src="img/yToken.png">
                     </div>
-                    <div class="row1">
-                        <div class="column1, square"></div>
-                        <div class="column2, square"></div>
-                        <div class="column3, square"></div>
-                    </div>
-                </div>
+                </a>
             </div>
         </div>
 
-        <div id="oScoreContainer">
-            <div id=oName>The Bot</div>
-            <div id=oScore>0</div>
-        </div>
-
     </div>
 
+  
 <script src="script.js">
 </script>
 </body>
