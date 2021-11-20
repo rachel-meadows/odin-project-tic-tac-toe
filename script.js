@@ -22,21 +22,17 @@ const gameBoard = function() {
     }
 }()
 
-// Create a player object for the user and the bot, using a factory + IIFE
+// Create a player object for the user and the bot, using a factory
 const createPlayer = (token, score) => {
-    this.token = token;
-    this.score = score;
-    // setToken (token) {
-    //     this.token = token;
-    //     return this;
-    //   }
-    // increaseScore (score) {
-    //     this.score = score;
-    //     score ++;
-    //     return score;
-    // }
-    return { token, score };
+    function increaseScore () {
+        this.score = this.score += 1;
+        return this;
+    }
+    return { token, score, increaseScore };
 };
+
+
+
 
 // Main game control
 const gameControl = function() {
@@ -52,8 +48,9 @@ const gameControl = function() {
                     player = createPlayer("o", 0);
                     bot = createPlayer("x", 0); 
                 }
-                console.log(player.token);
-                console.log(bot.token);
+                console.log("Initial player score: ", player);
+                player.increaseScore();
+                console.log("After increaseScore: ", player);
             });
         });
 
