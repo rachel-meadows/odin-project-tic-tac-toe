@@ -8,6 +8,7 @@
 // const bottomLeftSquare = document.querySelector("#7");
 // const bottomMidSquare = document.querySelector("#8");
 // const bottomRightSquare = document.querySelector("#9");
+const square = document.querySelectorAll(".square");
 const token = document.querySelectorAll(".token");
 
 // Show players' clicks as token on the game board (i.e. x or o on the grid)
@@ -22,50 +23,81 @@ const gameBoard = function() {
     }
 }()
 
-// Create a player object for the user and the bot, using a factory
-const createPlayer = (token, score) => {
-    function increaseScore () {
-        this.score = this.score += 1;
-        return this;
+// Create a player object for the user and the bot
+const createPlayer = function(token) {
+    return {
+        token,
+        score: 0,
+        increaseScore: function() {
+            this.score = this.score += 1;
+        },
+        setToken: function(newToken) {
+            this.token = newToken;
+        }
     }
-    return { token, score, increaseScore };
 };
 
+document.querySelector("#logo").addEventListener('click', () => {
+    document.querySelector("#tokenPickerBackground").style.display="flex";
+    getToken()
+});
 
-
+function getToken() {
+    const bot = createPlayer("");
+    const user = createPlayer("");
+    token.forEach((token) => {
+        token.addEventListener('click', () => {
+            if (token.id == "xToken") {
+                user.setToken("x");
+                bot.setToken("o");
+            } else {
+                user.setToken("o");
+                bot.setToken("x");
+            }
+            document.querySelector("#tokenPickerBackground").style.display="none";
+        });
+    });
+    gameControl(user, bot);
+}
 
 // Main game control
-const gameControl = function() {
-    getTokenChoice = function() {
-        token.forEach((token) => {
-            token.addEventListener('click', () => {
-                let player;
-                let bot;
-                if (token.id == "xToken") {
-                    player = createPlayer("x", 0);
-                    bot = createPlayer("o", 0); 
-                } else {
-                    player = createPlayer("o", 0);
-                    bot = createPlayer("x", 0); 
-                }
-                console.log("Initial player score: ", player);
-                player.increaseScore();
-                console.log("After increaseScore: ", player);
-            });
-        });
+function gameControl(user, bot) {
 
-
-    }
     getDifficultyChoice = function(){
+        let difficulty = "Easy"; // Default
         // Calculate it
         // Return it
     }
+
     restart = function(){
         // Calculate it
         // Return it
     }
-    // Whose turn is it?
-    // Is this a legal move?
-    getTokenChoice();
-}()
 
+    startNewGame = function(){
+        bot.score = 0;
+        user.score = 0;
+        startNewRound();
+    }
+
+    startNewRound = function(){
+        square.forEach((square) => {
+            square.addEventListener('click', function ( e ) {
+                console.log(square);
+                square.textContent = user.token;
+            });
+        });
+
+
+        // Whose turn is it?
+        // Is this a legal move?
+        // What's the result?
+        bot.increaseScore();
+    }
+
+
+    // Actual sequence
+    startNewGame();
+}
+
+getToken();

@@ -19,17 +19,54 @@
         <div id="tokenPickerPopup">
             <div id="tokenPickerPopupText">Choose your token!</div>
             <div id="tokens">
-                <a href="game.html">
                     <div id="xToken" class="token">
                         <img id="xTokenImage" src="img/xToken.png">
                     </div>
-                </a>
-                <a href="game.html">     
+            
                     <div id="oToken" class="token">
                         <img id="oTokenImage" src="img/yToken.png">
                     </div>
-                </a>
             </div>
+        </div>
+    </div>
+
+     <!-- Content is divided into 3 columns - the 2x scores, and the board -->
+     <div id="content">
+
+        <div id="xScoreContainer">
+            <div id=xName>You:</div>
+            <div id=xScore>0</div>
+        </div>
+
+        <div id="centerColumn">
+            <div id="centerContent">
+                <div id="buttons">
+                    <button id="difficulty">Difficulty: Easy ▼</button>
+                    <img src="img/reset.png" id="reset">
+                </div>
+                <div id="grid">
+                    <div class="row">
+                        <div class="square" id="1"></div>
+                        <div class="square" id="2"></div>
+                        <div class="square" id="3"></div>
+                    </div>
+                    <div class="row">
+                        <div class="square" id="4"></div>
+                        <div class="square" id="5"></div>
+                        <div class="square" id="6"></div>
+                    </div>
+                    <div class="row">
+                        <div class="square" id="7"></div>
+                        <div class="square" id="8"></div>
+                        <div class="square" id="9"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="oScoreContainer">
+            <div id=oName>The Bot:</div>
+            <div id=oScore>0</div>
         </div>
 
     </div>
