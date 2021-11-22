@@ -92,6 +92,20 @@ function gameControl(user, bot) {
     startNewRound = function(){
         let availableMoves = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]; // Square IDs
         playerTurn();
+
+        function checkState(player) {
+            // See if there's a win (one of 8x possible ways)
+            if (document.getElementById("1").textContent == player.token && document.getElementById("2").textContent == player.token && document.getElementById("3").textContent == player.token
+            || document.getElementById("4").textContent == player.token && document.getElementById("5").textContent == player.token && document.getElementById("6").textContent == player.token
+            || document.getElementById("7").textContent == player.token && document.getElementById("8").textContent == player.token && document.getElementById("9").textContent == player.token
+            || document.getElementById("1").textContent == player.token && document.getElementById("4").textContent == player.token && document.getElementById("7").textContent == player.token
+            || document.getElementById("2").textContent == player.token && document.getElementById("5").textContent == player.token && document.getElementById("8").textContent == player.token
+            || document.getElementById("3").textContent == player.token && document.getElementById("6").textContent == player.token && document.getElementById("9").textContent == player.token
+            || document.getElementById("1").textContent == player.token && document.getElementById("5").textContent == player.token && document.getElementById("9").textContent == player.token
+            || document.getElementById("3").textContent == player.token && document.getElementById("5").textContent == player.token && document.getElementById("7").textContent == player.token) {
+                console.log("WINNER!", player);
+            }
+        }
         
         function playerTurn() {
             square.forEach((square) => {
@@ -103,10 +117,7 @@ function gameControl(user, bot) {
                         square.textContent = user.token;
                         let thisSquareIndex = availableMoves.indexOf(square.id);
                         availableMoves.splice(thisSquareIndex, 1);
-                        console.log("----------------------")
-                        console.log("The user clicked: ", square);
-                        console.log("Available moves: ", availableMoves);
-                        console.log("----------------------")
+                        checkState(user);
                         botTurn();
                     }
                 });
@@ -126,13 +137,12 @@ function gameControl(user, bot) {
                         document.getElementById(`${botSquare}`).textContent = bot.token;
                         let thisSquareIndex = availableMoves.indexOf(botSquare);
                         availableMoves.splice(thisSquareIndex, 1);
-                        console.log("The bot clicked: ", document.getElementById(`${botSquare}`));
-                        console.log("Available moves: ", availableMoves);
+                        checkState(bot);
                         playerTurn();
-                    }, 500);
+                    }, 400);
                 }
             } else {
-                console.log("No more spots.")
+                console.log("It's a draw.")
             }
         }
 
