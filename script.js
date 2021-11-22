@@ -1,13 +1,4 @@
 // Declarations and initialisations
-// const topLeftSquare = document.querySelector("#1");
-// const topMidSquare = document.querySelector("#2");
-// const topRightSquare = document.querySelector("#3");
-// const midLeftSquare = document.querySelector("#4");
-// const midMidSquare = document.querySelector("#5");
-// const midRightSquare = document.querySelector("#6");
-// const bottomLeftSquare = document.querySelector("#7");
-// const bottomMidSquare = document.querySelector("#8");
-// const bottomRightSquare = document.querySelector("#9");
 const square = document.querySelectorAll(".square");
 const token = document.querySelectorAll(".token");
 
@@ -30,6 +21,11 @@ const createPlayer = function(token) {
         score: 0,
         increaseScore: function() {
             this.score = this.score += 1;
+            if (this.token == "x") {
+                document.querySelector("#xScore").textContent = this.score;
+            } else if (this.token == "o") {
+                document.querySelector("#oScore").textContent = this.score;
+            }
         },
         setToken: function(newToken) {
             this.token = newToken;
@@ -42,6 +38,11 @@ document.querySelector("#logo").addEventListener('click', () => {
     getToken()
 });
 
+document.querySelector("#reset").addEventListener('click', () => {
+    restart()
+});
+
+
 function getToken() {
     const bot = createPlayer("");
     const user = createPlayer("");
@@ -50,9 +51,13 @@ function getToken() {
             if (token.id == "xToken") {
                 user.setToken("x");
                 bot.setToken("o");
+                document.querySelector("#xName").textContent = "You:";
+                document.querySelector("#oName").textContent = "The Bot:";
             } else {
                 user.setToken("o");
                 bot.setToken("x");
+                document.querySelector("#xName").textContent = "The Bot:";
+                document.querySelector("#oName").textContent = "You:";
             }
             document.querySelector("#tokenPickerBackground").style.display="none";
         });
@@ -70,8 +75,12 @@ function gameControl(user, bot) {
     }
 
     restart = function(){
-        // Calculate it
-        // Return it
+        bot.score = 0;
+        user.score = 0;
+        square.forEach((square) => {
+            square.textContent = "";
+        });
+        startNewGame();
     }
 
     startNewGame = function(){
@@ -81,18 +90,55 @@ function gameControl(user, bot) {
     }
 
     startNewRound = function(){
-        square.forEach((square) => {
-            square.addEventListener('click', function ( e ) {
-                console.log(square);
-                square.textContent = user.token;
-            });
-        });
+        let availableMoves = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]; // Square IDs
+        playerTurn();
+        
+        function playerTurn() {
+            square.forEach((square) => {
+                square.addEventListener('click', function ( ) {
+                    if (!availableMoves.includes(square.id)) {
+                        // Already clicked
+                        playerTurn();
+                    } else {
+                        square.textContent = user.token;
+                        let thisSquareIndex = availableMoves.indexOf(square.id);
+                        availableMoves.splice(thisSquareIndex, 1);
+                        console.log("----------------------")
+                        console.log("The user clicked: ", square);
+                        console.log("Available moves: ", availableMoves);
+                        console.log("----------------------")
+                        botTurn();
+                    }
+                });
+            });  
+        }
 
+        function botTurn() {
+            if (availableMoves.length != 0) {
+                let randomMove = Math.floor(Math.random() * availableMoves.length);
+                let botSquare = availableMoves[randomMove];
 
-        // Whose turn is it?
-        // Is this a legal move?
-        // What's the result?
-        bot.increaseScore();
+                if (!availableMoves.includes(botSquare)) {
+                    // Already clicked
+                    botTurn();     
+                } else {
+                    setTimeout(() => { 
+                        document.getElementById(`${botSquare}`).textContent = bot.token;
+                        let thisSquareIndex = availableMoves.indexOf(botSquare);
+                        availableMoves.splice(thisSquareIndex, 1);
+                        console.log("The bot clicked: ", document.getElementById(`${botSquare}`));
+                        console.log("Available moves: ", availableMoves);
+                        playerTurn();
+                    }, 500);
+                }
+            } else {
+                console.log("No more spots.")
+            }
+        }
+
+        // What's the result? e.g.
+        // bot.increaseScore(); or
+        // user.increaseScore();
     }
 
 

@@ -65,7 +65,7 @@
 }
 
 #xTokenImage:hover, #oTokenImage:hover {
-    background-color: rgb(235, 235, 235);
+    background-color: rgb(241, 241, 241);
     cursor: pointer;
 }
 
@@ -188,4 +188,13 @@
     padding: 5px;
     flex-grow: 1;
     flex-basis: 0;
+    font-size: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.square:hover {
+    cursor: pointer;
+    background-color: rgb(211, 211, 211);
 }
