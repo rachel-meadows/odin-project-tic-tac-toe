@@ -15,8 +15,9 @@ const gameBoard = function() {
 }()
 
 // Create a player object for the user and the bot
-const createPlayer = function(token) {
+const createPlayer = function(token, name) {
     return {
+        name,
         token,
         score: 0,
         increaseScore: function() {
@@ -44,8 +45,8 @@ document.querySelector("#reset").addEventListener('click', () => {
 
 
 function getToken() {
-    const bot = createPlayer("");
-    const user = createPlayer("");
+    const bot = createPlayer("", "The Bot");
+    const user = createPlayer("", "You");
     token.forEach((token) => {
         token.addEventListener('click', () => {
             if (token.id == "xToken") {
@@ -83,6 +84,24 @@ function gameControl(user, bot) {
         startNewGame();
     }
 
+    gameResult = function(player) {
+        console.log("WINNER!", player);
+        player.increaseScore();
+        document.querySelector("#gameResultBackground").style.display="flex";
+        document.querySelector("#gameResult").innerText=`Winner:\n${player.name}`;
+        if (player.token == "x") {
+            document.querySelector("#gameResultBackground").style.background="#a40222";
+            document.querySelector("#gameResult").style.fontFamily="'Permanent Marker', cursive";
+            
+        } else {
+            document.querySelector("#gameResultBackground").style.background="#00a8f3";
+            document.querySelector("#gameResult").style.fontFamily="'Rye', sans-serif";
+        }
+        setTimeout(() => { 
+            document.querySelector("#gameResultBackground").style.display="none";
+        }, 4000);
+    }
+
     startNewGame = function(){
         bot.score = 0;
         user.score = 0;
@@ -103,7 +122,10 @@ function gameControl(user, bot) {
             || document.getElementById("3").textContent == player.token && document.getElementById("6").textContent == player.token && document.getElementById("9").textContent == player.token
             || document.getElementById("1").textContent == player.token && document.getElementById("5").textContent == player.token && document.getElementById("9").textContent == player.token
             || document.getElementById("3").textContent == player.token && document.getElementById("5").textContent == player.token && document.getElementById("7").textContent == player.token) {
-                console.log("WINNER!", player);
+                gameResult(player);
+                return true;
+            } else {
+                return false;
             }
         }
         
@@ -117,7 +139,10 @@ function gameControl(user, bot) {
                         square.textContent = user.token;
                         let thisSquareIndex = availableMoves.indexOf(square.id);
                         availableMoves.splice(thisSquareIndex, 1);
-                        checkState(user);
+                        gameOver = checkState(user);
+                        if (gameOver) {
+                            restart();
+                        }
                         botTurn();
                     }
                 });
@@ -137,7 +162,10 @@ function gameControl(user, bot) {
                         document.getElementById(`${botSquare}`).textContent = bot.token;
                         let thisSquareIndex = availableMoves.indexOf(botSquare);
                         availableMoves.splice(thisSquareIndex, 1);
-                        checkState(bot);
+                        gameOver = checkState(bot);
+                        if (gameOver) {
+                            restart();
+                        }
                         playerTurn();
                     }, 400);
                 }

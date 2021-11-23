@@ -22,6 +22,18 @@
     cursor: pointer;
 }
 
+#gameResultBackground {
+    width: 100vw;
+    height: 92vh;
+    background-color: rgba(138, 6, 179, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: absolute;
+    z-index: 100;
+}
+
 #tokenPickerBackground {
     width: 100vw;
     height: 92vh;
