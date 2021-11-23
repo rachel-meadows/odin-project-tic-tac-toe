@@ -23,6 +23,10 @@ const createPlayer = function(token, name, score) {
     }
 };
 
+// Create bot and user objects (creating them within getToken creates duplicates)
+const bot = createPlayer("", "The Bot", 0);
+const user = createPlayer("", "You", 0);
+
 document.querySelector("#logo").addEventListener('click', () => {
     document.querySelector("#tokenPickerBackground").style.display="flex";
     getToken()
@@ -30,24 +34,26 @@ document.querySelector("#logo").addEventListener('click', () => {
 
 
 function getToken() {
-    const bot = createPlayer("", "The Bot", 0);
-    const user = createPlayer("", "You", 0);
-    token.forEach((token) => {
-        token.addEventListener('click', () => {
-            if (token.id == "xToken") {
-                user.setToken("x");
-                bot.setToken("o");
-                document.querySelector("#xName").textContent = "You:";
-                document.querySelector("#oName").textContent = "The Bot:";
-            } else {
-                user.setToken("o");
-                bot.setToken("x");
-                document.querySelector("#xName").textContent = "The Bot:";
-                document.querySelector("#oName").textContent = "You:";
-            }
-            document.querySelector("#tokenPickerBackground").style.display="none";
-        });
-    });
+    document.querySelector("#xToken").addEventListener('click', handleEvent);
+    document.querySelector("#oToken").addEventListener('click', handleEvent);
+
+    function handleEvent() {
+        console.log("Scream!");
+        if (this.id == "xToken") {
+            user.setToken("x");
+            bot.setToken("o");
+            document.querySelector("#xName").textContent = "You:";
+            document.querySelector("#oName").textContent = "The Bot:";
+        } else {
+            user.setToken("o");
+            bot.setToken("x");
+            document.querySelector("#xName").textContent = "The Bot:";
+            document.querySelector("#oName").textContent = "You:";
+        }
+        document.querySelector("#tokenPickerBackground").style.display="none";
+        document.querySelector("#xToken").removeEventListener('click', handleEvent);
+        document.querySelector("#oToken").removeEventListener('click', handleEvent);
+    }
     gameControl(user, bot);
 }
 
