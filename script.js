@@ -1,27 +1,16 @@
 // Declarations and initialisations
-const square = document.querySelectorAll(".square");
-const token = document.querySelectorAll(".token");
-
-// Show players' clicks as token on the game board (i.e. x or o on the grid)
-const gameBoard = function() {
-    movesArray = [ [1, 2, 3], [4, 5, 6], [7, 8 , 9] ];
-    showMovesArray = function(token, squareID){
-        if (!squareID.innerText) {
-            return squareID.innerText = token;
-        } else {
-            return alert("Invalid move");
-        }
-    }
-}()
+"use strict";
+const square = document.querySelectorAll(".square"); // 9x options
+const token = document.querySelectorAll(".token"); // Choice of x or o
 
 // Create a player object for the user and the bot
-const createPlayer = function(token, name) {
+const createPlayer = function(token, name, score) {
     return {
         name,
         token,
-        score: 0,
+        score,
         increaseScore: function() {
-            this.score = this.score += 1;
+            this.score = this.score + 1;
             if (this.token == "x") {
                 document.querySelector("#xScore").textContent = this.score;
             } else if (this.token == "o") {
@@ -39,14 +28,10 @@ document.querySelector("#logo").addEventListener('click', () => {
     getToken()
 });
 
-document.querySelector("#reset").addEventListener('click', () => {
-    restart()
-});
-
 
 function getToken() {
-    const bot = createPlayer("", "The Bot");
-    const user = createPlayer("", "You");
+    const bot = createPlayer("", "The Bot", 0);
+    const user = createPlayer("", "You", 0);
     token.forEach((token) => {
         token.addEventListener('click', () => {
             if (token.id == "xToken") {
@@ -68,47 +53,52 @@ function getToken() {
 
 // Main game control
 function gameControl(user, bot) {
-
-    getDifficultyChoice = function(){
-        let difficulty = "Easy"; // Default
-        // Calculate it
-        // Return it
-    }
-
-    restart = function(){
-        bot.score = 0;
-        user.score = 0;
+    
+    let reset = function(){
         square.forEach((square) => {
             square.textContent = "";
         });
-        startNewGame();
     }
+    reset();
 
-    gameResult = function(player) {
-        console.log("WINNER!", player);
-        player.increaseScore();
-        document.querySelector("#gameResultBackground").style.display="flex";
-        document.querySelector("#gameResult").innerText=`Winner:\n${player.name}`;
-        if (player.token == "x") {
-            document.querySelector("#gameResultBackground").style.background="#a40222";
-            document.querySelector("#gameResult").style.fontFamily="'Permanent Marker', cursive";
-            
+    document.querySelector("#reset").addEventListener('click', () => {
+        reset();
+        startNewGame();
+    });
+
+    let gameResult = function(player) {
+        if (player === "draw") {
+            document.querySelector("#gameResultBackground").style.background="#8a06b3";
+            document.querySelector("#gameResultBackground").style.display="flex";
+            document.querySelector("#gameResult").innerText="Draw!";
         } else {
-            document.querySelector("#gameResultBackground").style.background="#00a8f3";
-            document.querySelector("#gameResult").style.fontFamily="'Rye', sans-serif";
+            player.increaseScore();
+            document.querySelector("#gameResultBackground").style.display="flex";
+            document.querySelector("#gameResult").innerText=`Winner:\n${player.name}`;
+            if (player.token == "x") {
+                document.querySelector("#gameResultBackground").style.background="#a40222";
+                document.querySelector("#gameResult").style.fontFamily="'Permanent Marker', cursive";
+                
+            } else {
+                document.querySelector("#gameResultBackground").style.background="#00a8f3";
+                document.querySelector("#gameResult").style.fontFamily="'Rye', sans-serif";
+            }
         }
         setTimeout(() => { 
             document.querySelector("#gameResultBackground").style.display="none";
-        }, 4000);
+        }, 1500);
+
     }
 
-    startNewGame = function(){
+    let startNewGame = function(){
         bot.score = 0;
         user.score = 0;
+        document.querySelector("#xScore").textContent = 0;
+        document.querySelector("#oScore").textContent = 0;
         startNewRound();
     }
 
-    startNewRound = function(){
+    let startNewRound = function(){
         let availableMoves = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]; // Square IDs
         playerTurn();
 
@@ -129,9 +119,12 @@ function gameControl(user, bot) {
             }
         }
         
+        // Issue is here
+        // "You can't remove a => listener, since a new function will be created each time the render method is called"
+        // https://stackoverflow.com/questions/47391178/javascript-event-listener-memory-leak
         function playerTurn() {
             square.forEach((square) => {
-                square.addEventListener('click', function ( ) {
+                square.addEventListener('click', function handlePlayerClick() {
                     if (!availableMoves.includes(square.id)) {
                         // Already clicked
                         playerTurn();
@@ -139,49 +132,47 @@ function gameControl(user, bot) {
                         square.textContent = user.token;
                         let thisSquareIndex = availableMoves.indexOf(square.id);
                         availableMoves.splice(thisSquareIndex, 1);
-                        gameOver = checkState(user);
+                        let gameOver = checkState(user);
                         if (gameOver) {
-                            restart();
+                            reset();
+                            startNewRound();
+                        } else {
+                            botTurn();
                         }
-                        botTurn();
                     }
                 });
-            });  
+            }); 
         }
 
         function botTurn() {
             if (availableMoves.length != 0) {
                 let randomMove = Math.floor(Math.random() * availableMoves.length);
                 let botSquare = availableMoves[randomMove];
-
-                if (!availableMoves.includes(botSquare)) {
-                    // Already clicked
-                    botTurn();     
+                setTimeout(() => { 
+                    document.getElementById(`${botSquare}`).textContent = bot.token;
+                }, 700);
+                console.log("bot move: ", botSquare)
+                let thisSquareIndex = availableMoves.indexOf(botSquare);
+                availableMoves.splice(thisSquareIndex, 1);
+                let gameOver = checkState(bot);
+                if (gameOver) {
+                    reset();
+                    startNewRound();
                 } else {
-                    setTimeout(() => { 
-                        document.getElementById(`${botSquare}`).textContent = bot.token;
-                        let thisSquareIndex = availableMoves.indexOf(botSquare);
-                        availableMoves.splice(thisSquareIndex, 1);
-                        gameOver = checkState(bot);
-                        if (gameOver) {
-                            restart();
-                        }
-                        playerTurn();
-                    }, 400);
+                    playerTurn();
                 }
-            } else {
-                console.log("It's a draw.")
+                
+            } else { // No possible moves left
+                gameResult("draw");
+                reset();
+                startNewRound();
             }
         }
-
-        // What's the result? e.g.
-        // bot.increaseScore(); or
-        // user.increaseScore();
     }
 
-
     // Actual sequence
-    startNewGame();
+    startNewRound();
 }
+
 
 getToken();

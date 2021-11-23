@@ -54,7 +54,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 7vh;
+    gap: 8vh;
 }
 
 #tokenPickerPopupText {
@@ -65,11 +65,11 @@
 #tokens {
     display: flex;
     flex-direction: row;
-    gap: 10vh;
+    gap: 8vh;
 }
 
 #xTokenImage, #oTokenImage {
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     border-radius: 6px;
     padding: 3vh;
     width: 40vh;
@@ -82,11 +82,11 @@
 }
 
 #xTokenImage:hover {
-    box-shadow: 1px 1px 2px #a40222;
+    box-shadow: 1px 1px 3px #a40222;
 }
 
 #oTokenImage:hover {
-    box-shadow: 1px 1px 2px #00a8f3;
+    box-shadow: 1px 1px 3px #00a8f3;
 }
 
 
