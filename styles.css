@@ -8,6 +8,11 @@
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
+@font-face {
+    font-family: 'Virgil';
+    src: url('Virgil.woff2') format('woff2');
+  }
+
 #navigation {
     background-color: black;
     display: flex;
@@ -58,6 +63,7 @@
 }
 
 #tokenPickerPopupText {
+    font-family: "Virgil", 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     color: white;
     text-align: center;
 }

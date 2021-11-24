@@ -125,7 +125,6 @@ function gameControl(user, bot) {
                     clearBoard();
                     startNewRound();
                 } else {
-                    console.log("scream")
                     botTurn();
                 }
             }
@@ -157,7 +156,6 @@ function gameControl(user, bot) {
         playerTurn();
         
         let botTurn = function() {
-            console.log("botturn");
             if (availableMoves.length != 0) {
                 let randomMove = Math.floor(Math.random() * availableMoves.length);
                 let botSquare = availableMoves[randomMove];
