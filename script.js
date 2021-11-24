@@ -27,11 +27,12 @@ const createPlayer = function(token, name, score) {
 const bot = createPlayer("", "The Bot", 0);
 const user = createPlayer("", "You", 0);
 
-document.querySelector("#logo").addEventListener('click', () => {
+// Allow user to change tokens via the home button
+document.querySelector("#logo").addEventListener('click', handleLogoEvent);
+function handleLogoEvent() {
     document.querySelector("#tokenPickerBackground").style.display="flex";
     getToken()
-});
-
+};
 
 function getToken() {
     document.querySelector("#xToken").addEventListener('click', handleEvent);
@@ -58,18 +59,21 @@ function getToken() {
 
 // Main game control
 function gameControl(user, bot) {
-    
-    let reset = function(){
-        square.forEach((square) => {
-            square.textContent = "";
-        });
-    }
-    reset();
 
-    document.querySelector("#reset").addEventListener('click', () => {
-        reset();
+    let clearBoard = function() {
+        for(let i=0 ; i < square.length; i++){
+            square[i].textContent = "";
+        }
+    }
+    
+    document.querySelector("#reset").addEventListener('click', reset);
+    function reset() {
+        clearBoard();
         startNewGame();
-    });
+    };
+    
+
+    clearBoard();
 
     let gameResult = function(player) {
         if (player === "draw") {
@@ -105,9 +109,29 @@ function gameControl(user, bot) {
 
     let startNewRound = function(){
         let availableMoves = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]; // Square IDs
-        playerTurn();
+        
+        let processUserClick = function(e){
+            if (!availableMoves.includes(e.target.id)) { // Already clicked
+                playerTurn();
+            } else {
+                e.target.textContent = user.token;
+                let thisSquareIndex = availableMoves.indexOf(e.target.id);
+                availableMoves.splice(thisSquareIndex, 1);
+                let gameOver = checkState(user);
+                for(let i=0 ; i < square.length; i++){
+                    square[i].removeEventListener("click", processUserClick, {once: true});
+                }
+                if (gameOver) {
+                    clearBoard();
+                    startNewRound();
+                } else {
+                    console.log("scream")
+                    botTurn();
+                }
+            }
+        }
 
-        function checkState(player) {
+        let checkState = function(player) {
             // See if there's a win (one of 8x possible ways)
             if (document.getElementById("1").textContent == player.token && document.getElementById("2").textContent == player.token && document.getElementById("3").textContent == player.token
             || document.getElementById("4").textContent == player.token && document.getElementById("5").textContent == player.token && document.getElementById("6").textContent == player.token
@@ -124,33 +148,16 @@ function gameControl(user, bot) {
             }
         }
         
-        function playerTurn() {
-            function processEvent(e){
-                if (!availableMoves.includes(e.target.id)) { // Already clicked
-                    playerTurn();
-                } else {
-                    e.target.textContent = user.token;
-                    let thisSquareIndex = availableMoves.indexOf(e.target.id);
-                    availableMoves.splice(thisSquareIndex, 1);
-                    let gameOver = checkState(user);
-                    for(let i=0 ; i < square.length; i++){
-                        square[i].removeEventListener("click", processEvent, false);
-                    }
-                    if (gameOver) {
-                        reset();
-                        startNewRound();
-                    } else {
-                        botTurn();
-                    }
-                }
-              }
-              
+        let playerTurn = function() {
             for(let i=0 ; i < square.length; i++){
-                square[i].addEventListener("click", processEvent, false);
+                square[i].addEventListener("click", processUserClick, {once: true});
             }
         }
 
-        function botTurn() {
+        playerTurn();
+        
+        let botTurn = function() {
+            console.log("botturn");
             if (availableMoves.length != 0) {
                 let randomMove = Math.floor(Math.random() * availableMoves.length);
                 let botSquare = availableMoves[randomMove];
@@ -162,7 +169,7 @@ function gameControl(user, bot) {
                 availableMoves.splice(thisSquareIndex, 1);
                 let gameOver = checkState(bot);
                 if (gameOver) {
-                    reset();
+                    clearBoard();
                     startNewRound();
                 } else {
                     playerTurn();
@@ -170,7 +177,7 @@ function gameControl(user, bot) {
                 
             } else { // No possible moves left
                 gameResult("draw");
-                reset();
+                clearBoard();
                 startNewRound();
             }
         }
@@ -179,6 +186,5 @@ function gameControl(user, bot) {
     // Actual sequence
     startNewRound();
 }
-
 
 getToken();
