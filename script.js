@@ -38,7 +38,6 @@ function getToken() {
     document.querySelector("#oToken").addEventListener('click', handleEvent);
 
     function handleEvent() {
-        console.log("Scream!");
         if (this.id == "xToken") {
             user.setToken("x");
             bot.setToken("o");
@@ -125,29 +124,30 @@ function gameControl(user, bot) {
             }
         }
         
-        // Issue is here
-        // "You can't remove a => listener, since a new function will be created each time the render method is called"
-        // https://stackoverflow.com/questions/47391178/javascript-event-listener-memory-leak
         function playerTurn() {
-            square.forEach((square) => {
-                square.addEventListener('click', function handlePlayerClick() {
-                    if (!availableMoves.includes(square.id)) {
-                        // Already clicked
-                        playerTurn();
-                    } else {
-                        square.textContent = user.token;
-                        let thisSquareIndex = availableMoves.indexOf(square.id);
-                        availableMoves.splice(thisSquareIndex, 1);
-                        let gameOver = checkState(user);
-                        if (gameOver) {
-                            reset();
-                            startNewRound();
-                        } else {
-                            botTurn();
-                        }
+            function processEvent(e){
+                if (!availableMoves.includes(e.target.id)) { // Already clicked
+                    playerTurn();
+                } else {
+                    e.target.textContent = user.token;
+                    let thisSquareIndex = availableMoves.indexOf(e.target.id);
+                    availableMoves.splice(thisSquareIndex, 1);
+                    let gameOver = checkState(user);
+                    for(let i=0 ; i < square.length; i++){
+                        square[i].removeEventListener("click", processEvent, false);
                     }
-                });
-            }); 
+                    if (gameOver) {
+                        reset();
+                        startNewRound();
+                    } else {
+                        botTurn();
+                    }
+                }
+              }
+              
+            for(let i=0 ; i < square.length; i++){
+                square[i].addEventListener("click", processEvent, false);
+            }
         }
 
         function botTurn() {
