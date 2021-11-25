@@ -57,22 +57,31 @@ function getToken() {
     gameControl(user, bot);
 }
 
+
+
+let clearBoard = function() {
+    for(let i=0 ; i < square.length; i++){
+        square[i].textContent = "";
+    }
+}
+
+let startNewGame = function(){
+    bot.score = 0;
+    user.score = 0;
+    document.querySelector("#xScore").textContent = 0;
+    document.querySelector("#oScore").textContent = 0;
+    gameControl(user, bot);
+}
+
+document.querySelector("#reset").addEventListener('click', reset);
+function reset() {
+    clearBoard();
+    startNewGame();
+};
+
 // Main game control
 function gameControl(user, bot) {
-
-    let clearBoard = function() {
-        for(let i=0 ; i < square.length; i++){
-            square[i].textContent = "";
-        }
-    }
     
-    document.querySelector("#reset").addEventListener('click', reset);
-    function reset() {
-        clearBoard();
-        startNewGame();
-    };
-    
-
     clearBoard();
 
     let gameResult = function(player) {
@@ -93,40 +102,45 @@ function gameControl(user, bot) {
                 document.querySelector("#gameResult").style.fontFamily="'Rye', sans-serif";
             }
         }
-        setTimeout(() => { 
+
+        const setTimeoutHandler = function() {
             document.querySelector("#gameResultBackground").style.display="none";
-        }, 1500);
-
+        }
+        setTimeout(setTimeoutHandler, 1000);
     }
 
-    let startNewGame = function(){
-        bot.score = 0;
-        user.score = 0;
-        document.querySelector("#xScore").textContent = 0;
-        document.querySelector("#oScore").textContent = 0;
-        startNewRound();
-    }
 
     let startNewRound = function(){
         let availableMoves = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]; // Square IDs
+        let timeout = 0;
+
+        function afterEvents() {
+            for(let i=0 ; i < square.length; i++){
+                square[i].removeEventListener("click", processUserClick, {once: true});
+            }
+            console.log('This should be running after user click, and before the bot\'s turn');
+            let gameOver = checkState(user);
+            if (gameOver) {
+                clearBoard();
+                startNewRound();
+            } else {
+                botTurn();
+            }
+        }
         
         let processUserClick = function(e){
+            console.log("hi")
             if (!availableMoves.includes(e.target.id)) { // Already clicked
                 playerTurn();
             } else {
+                console.log("The user has clicked and processUserClick is running.")
+                console.log("The user clicked ", e.target.id)
+                if (timeout) clearTimeout(timeout);
+                console.log(timeout);
+                timeout = setTimeout(afterEvents);
                 e.target.textContent = user.token;
                 let thisSquareIndex = availableMoves.indexOf(e.target.id);
                 availableMoves.splice(thisSquareIndex, 1);
-                let gameOver = checkState(user);
-                for(let i=0 ; i < square.length; i++){
-                    square[i].removeEventListener("click", processUserClick, {once: true});
-                }
-                if (gameOver) {
-                    clearBoard();
-                    startNewRound();
-                } else {
-                    botTurn();
-                }
             }
         }
 
@@ -149,20 +163,29 @@ function gameControl(user, bot) {
         
         let playerTurn = function() {
             for(let i=0 ; i < square.length; i++){
-                square[i].addEventListener("click", processUserClick, {once: true});
+               square[i].addEventListener("click", processUserClick, {once: true});
             }
         }
 
         playerTurn();
         
         let botTurn = function() {
+            console.log("It is now the bot's turn.")
             if (availableMoves.length != 0) {
                 let randomMove = Math.floor(Math.random() * availableMoves.length);
                 let botSquare = availableMoves[randomMove];
-                setTimeout(() => { 
-                    document.getElementById(`${botSquare}`).textContent = bot.token;
-                }, 700);
-                console.log("bot move: ", botSquare)
+
+                function wait(ms) {
+                    var start = Date.now(),
+                        now = start;
+                    while (now - start < ms) {
+                      now = Date.now();
+                    }
+                }
+
+                document.getElementById(`${botSquare}`).textContent = bot.token;
+                wait(400);
+
                 let thisSquareIndex = availableMoves.indexOf(botSquare);
                 availableMoves.splice(thisSquareIndex, 1);
                 let gameOver = checkState(bot);
