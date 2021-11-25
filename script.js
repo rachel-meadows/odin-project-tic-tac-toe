@@ -2,6 +2,32 @@
 "use strict";
 const square = document.querySelectorAll(".square"); // 9x options
 const token = document.querySelectorAll(".token"); // Choice of x or o
+let difficulty = "Easy"; // default
+
+document.querySelector("#difficultyButton").addEventListener('click', showDifficultyMenu);
+let dropdown = document.querySelector("#difficultyMenu");
+
+function showDifficultyMenu(){
+    if (dropdown.style.display === "none") {
+      dropdown.style.display = "flex";
+    } else {
+      dropdown.style.display = "none";
+    }
+    document.querySelector("#Easy").addEventListener('click', setDifficulty);
+    document.querySelector("#Medium").addEventListener('click', setDifficulty);
+    document.querySelector("#Hard").addEventListener('click', setDifficulty);
+    console.log(difficulty)
+};
+
+let setDifficulty = function(e){
+    document.querySelector("#Easy").removeEventListener('click', setDifficulty);
+    document.querySelector("#Medium").removeEventListener('click', setDifficulty);
+    document.querySelector("#Hard").removeEventListener('click', setDifficulty);
+    difficulty = e.target.id;
+    dropdown.style.display = "none";
+    document.querySelector("#difficultyButton").innerText=`Difficulty: ${e.target.id} ▼`;
+    startNewGame();
+}
 
 // Create a player object for the user and the bot
 const createPlayer = function(token, name, score) {
@@ -54,10 +80,8 @@ function getToken() {
         document.querySelector("#xToken").removeEventListener('click', handleEvent);
         document.querySelector("#oToken").removeEventListener('click', handleEvent);
     }
-    gameControl(user, bot);
+    gameControl(user, bot, difficulty);
 }
-
-
 
 let clearBoard = function() {
     for(let i=0 ; i < square.length; i++){
@@ -70,7 +94,7 @@ let startNewGame = function(){
     user.score = 0;
     document.querySelector("#xScore").textContent = 0;
     document.querySelector("#oScore").textContent = 0;
-    gameControl(user, bot);
+    gameControl(user, bot, difficulty);
 }
 
 document.querySelector("#reset").addEventListener('click', reset);
@@ -79,8 +103,9 @@ function reset() {
     startNewGame();
 };
 
+
 // Main game control
-function gameControl(user, bot) {
+function gameControl(user, bot, difficulty) {
     
     clearBoard();
 
@@ -129,14 +154,11 @@ function gameControl(user, bot) {
         }
         
         let processUserClick = function(e){
-            console.log("hi")
             if (!availableMoves.includes(e.target.id)) { // Already clicked
                 playerTurn();
             } else {
                 console.log("The user has clicked and processUserClick is running.")
-                console.log("The user clicked ", e.target.id)
                 if (timeout) clearTimeout(timeout);
-                console.log(timeout);
                 timeout = setTimeout(afterEvents);
                 e.target.textContent = user.token;
                 let thisSquareIndex = availableMoves.indexOf(e.target.id);
@@ -170,10 +192,29 @@ function gameControl(user, bot) {
         playerTurn();
         
         let botTurn = function() {
+            console.log("difficulty: ", difficulty)
             console.log("It is now the bot's turn.")
             if (availableMoves.length != 0) {
+                // Default
                 let randomMove = Math.floor(Math.random() * availableMoves.length);
                 let botSquare = availableMoves[randomMove];
+
+                if (difficulty === "Easy") {
+                    // Use default botSquare value for now
+                } else if (difficulty === "Medium") {
+                    if (availableMoves.includes("5")) {
+                        botSquare = "5";
+                    } else {
+                        // Use default botSquare value for now
+                    }
+                } else { // Hard
+                    // Todo: proper function here
+                    if (availableMoves.includes("5")) {
+                        botSquare = "5";
+                    } else {
+                        // Use default botSquare value for now
+                    }
+                }
 
                 function wait(ms) {
                     var start = Date.now(),

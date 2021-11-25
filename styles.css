@@ -95,6 +95,42 @@
     box-shadow: 1px 1px 3px #00a8f3;
 }
 
+#difficultyContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+#difficultyMenu {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    z-index: 10;
+}
+
+.difficultyOption {
+    font-size: 15px;
+    background-color: white;
+    border: 1px grey solid;
+    padding: 2px 7px;
+}
+
+.difficultyOption:hover {
+    cursor: pointer;
+    background-color: rgb(190, 190, 190);
+}
+
+#difficultyButton {
+    font-size: 15px;
+    padding: 3px 7px;
+    height: 35px;
+}
+
+#difficultyButton, #reset {
+    border: rgb(56, 56, 56) 1px solid;
+    box-shadow: 1px 1px 1px rgba(56, 56, 56, 0.5);
+    border-radius: 3px;
+    background-color: white;
+}
 
 #content {
     display: flex;
@@ -162,26 +198,13 @@
     padding: 0px 10px 0px 10px;
 }
 
-#difficulty {
-    font-size: 15px;
-    padding: 0px 7px;
-    height: 35px;
-}
-
-#difficulty, #reset {
-    border: rgb(56, 56, 56) 1px solid;
-    box-shadow: 1px 1px 1px rgba(56, 56, 56, 0.5);
-    border-radius: 3px;
-    background-color: white;
-}
-
 #reset {
     width: 35px;
     height: 35px;
     padding: 5px;
 }
 
-#reset:hover, #difficulty:hover {
+#reset:hover, #difficultyButton:hover {
     background-color: rgb(235, 235, 235);
     cursor: pointer;
     box-shadow: 1px 1px 1px rgba(56, 56, 56, 0.7);
